@@ -1,26 +1,40 @@
-import React from 'react';
+import React, { Component } from 'react';
+import Lane from './Lane.js';
 import logo from './logo.svg';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      tasks: []
+    }
+  }
+
+  componentDidMount() {
+    fetch('http://localhost:8000/api/tasks').then( r => r.json() ).then(
+      r => {
+        // r.data.tasks
+        this.setState({
+          tasks: r.data.tasks
+        });
+      }
+    );
+  }
+
+  render(){
+    return (
+      <div className="App">
+        <h1>Hay { this.state.tasks.length } tareas</h1>
+        <div className="d-flex">
+          <Lane tasks={ this.state.tasks.filter( task => task.status == 1 ) } />
+          <Lane tasks={ this.state.tasks.filter( task => task.status == 2 ) } />
+          <Lane tasks={ this.state.tasks.filter( task => task.status == 3 ) } />
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;
